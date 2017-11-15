@@ -1,3 +1,4 @@
+"DateObserved","HourObserved","LocalTimeZone","ReportingArea","StateCode","Latitude","Longitude","ParameterName","AQI","CategoryNumber","CategoryName"
 "2011-01-01 ","0","EST","Winchester","VA","39.15","-78.15","OZONE","33","1","Good"
 "2011-01-01 ","0","EST","Winchester","VA","39.15","-78.15","PM2.5","99","2","Moderate"
 "2011-01-02 ","0","EST","Winchester","VA","39.15","-78.15","OZONE","30","1","Good"
