@@ -1,0 +1,10 @@
+The data is downloaded from Airnow API using query format:
+
+http://www.airnowapi.org/aq/observation/zipCode/historical/?format=text/csv&zipCode=<zipcode>&date=YYYY-MM-DDT00-0000&distance=25&API_KEY=<key>
+
+The API has 500 queries/hour limit. The data is 24-hour average PM25 and Ozone
+
+Different format of the historical data can be downloaded directly from:
+
+http://files.airnowtech.org/
+
