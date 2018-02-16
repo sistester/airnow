@@ -46,3 +46,50 @@ ggplot(df2, aes(Year, YMean, color=ParameterName)) + geom_point() + geom_line(da
 
 ggplot(df2, aes(x=as.Date(Year,format='%Y'), YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(x=as.Date(Year,format='%Y'),y=pred, group=ParameterName)) + facet_wrap( ~ model)
 ggplot(df2, aes(x=as.Date(Year,format='%Y'), YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(x=as.Date(Year,format='%Y'),y=pred)) + facet_wrap( ~ model)
+
+
+#Calculate bluebird data:
+bluebird10_14 <- read_csv("airnow-data/bluebird10-14.csv")
+bf2  <- bluebird10_14 %>%
+     group_by(Year) %>%
+     summarise(BSum=sum(Boxes,na.rm=TRUE),FSum=sum(Fledged,na.rm=TRUE))
+bf2$avg <- bf2$FSum / bf2$BSum
+ggplot(data=bf2, aes(x=Year, y=avg)) + geom_line() + geom_point()
+
+library(readr)
+cordata_pm <- read_csv("airnow-data/cordata-pm")
+library("ggpubr")
+#visualization
+ggscatter(cordata_pm, x = "PM", y = "Bird", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Bird Fledged per Box", ylab = "PM2.5")
+#Are the data from each of the 2 variables (x, y) follow a normal distribution?
+#
+#    Use Shapiro-Wilk normality test –> R function: shapiro.test()
+#        and look at the normality plot —> R function: ggpubr::ggqqplot()
+# Shapiro-Wilk normality test for bird
+shapiro.test(cordata_pm$Bird) 
+# data:  cordata_pm$Bird
+# W = 0.78289, p-value = 0.05835
+#
+# # Shapiro-Wilk normality test for PM2.5
+shapiro.test(cordata_pm$PM)
+# data:  cordata_pm$Bird
+# W = 0.78289, p-value = 0.05835
+#
+# Visual inspection of the data normality using Q-Q plots (quantile-quantile plots). Q-Q plot draws the correlation between a given sample and the normal distribution.
+library("ggpubr")
+ggqqplot(cordata_pm$Bird, ylab = "Bird")
+ggqqplot(cordata_pm$PM, ylab = "PM")
+#Pearson Correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "pearson")
+res
+
+#Kendall rank correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "kendall")
+res
+
+#Spearman rank correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "spearman")
+res
