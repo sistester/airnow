@@ -1,0 +1,48 @@
+#import data
+airnow <- read_csv("airnow-data/airnow-20906.csv", col_types = cols(DateObserved = col_date(format = "%Y-%m-%d")))
+colnames(airnow_20906) <- c("DateObserved","HourObserved","LocalTimeZone","ReportingArea","StateCode","Latitude","Longitude","ParameterName","AQI","CategoryNumber","CategoryName")
+
+# process data and get mean, max, min, median and std
+library(dplyr);
+library(tidyr);
+df <- airnow_20906 %>% separate(DateObserved, into=c("Year","Month", "Day"),sep="-")
+df2 <- df %>%
+group_by(Year,ParameterName) %>%
+summarise(YMean=mean(AQI, na.rm=TRUE), YMax=max(AQI,  na.rm=TRUE), YMin=min(AQI,  na.rm=TRUE), YMedian=median(AQI,  na.rm=TRUE), YStd=sd(AQI,  na.rm=TRUE))
+df2
+
+#plot it
+library(ggplot2)
+
+#put dots only for mean
+ggplot(data=df2, aes(x=Year, y=YMean, color=ParameterName)) + geom_line() + geom_point()
+
+#put dots and connect them with lines for mean
+ggplot(data=df2, aes(x=Year, y=YMean, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+
+#put dots and line for median, std, min and max
+ggplot(data=df2, aes(x=Year, y=YMedian, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+ggplot(data=df2, aes(x=Year, y=YStd, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+ggplot(data=df2, aes(x=Year, y=YMin, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+ggplot(data=df2, aes(x=Year, y=YMax, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+df2
+ggplot(data=df2, aes(x=Year, y=YMax, color=ParameterName, group=ParameterName)) + geom_line() + geom_point() + geom_abline()
+
+#coefficiency
+df_mod <- lm (YMax ~ Year, data=df2)
+coef(df_mod)
+
+library(modelr)
+grid <- df2 %>% data_grid(YMin)
+mod1 <- lm (YMean ~ Year + ParameterName, data = df2)
+mod2 <- lm (YMean ~ Year * ParameterName, data = df2)
+grid <- df2 %>% data_grid(Year, ParameterName) %>% gather_predictions(mod1, mod2)
+grid
+
+#plot the models, predictions
+ggplot(df2, aes(Year, YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(y=pred)) + facet_wrap( ~ model)
+ggplot(df2, aes(Year, YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(y=pred, group=ParameterName)) + facet_wrap( ~ model)
+
+
+ggplot(df2, aes(x=as.Date(Year,format='%Y'), YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(x=as.Date(Year,format='%Y'),y=pred, group=ParameterName)) + facet_wrap( ~ model)
+ggplot(df2, aes(x=as.Date(Year,format='%Y'), YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(x=as.Date(Year,format='%Y'),y=pred)) + facet_wrap( ~ model)
