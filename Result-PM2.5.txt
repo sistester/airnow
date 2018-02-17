@@ -1,0 +1,135 @@
+ PM2.5
+Overall:
+
+Pearson's product-moment correlation
+
+data:  cordata_pm$Bird and cordata_pm$PM
+t = -1.169, df = 3, p-value = 0.3269
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.9652700  0.6374803
+sample estimates:
+       cor 
+-0.5594184 
+
+
+
+	Kendall's rank correlation tau
+
+data:  cordata_pm$Bird and cordata_pm$PM
+T = 5, p-value = 1
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+tau 
+  0 
+
+
+	Spearman's rank correlation rho
+
+data:  cordata_pm$Bird and cordata_pm$PM
+S = 22, p-value = 0.95
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+ rho 
+-0.1 
+
+
+Wheaton regional park (10.7 mile)
+
+Pearson's product-moment correlation
+
+data:  cordata_pm$Bird and cordata_pm$PM
+t = -0.42313, df = 3, p-value = 0.7007
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.9257524  0.8157481
+sample estimates:
+       cor 
+-0.2373173 
+
+
+	Kendall's rank correlation tau
+
+data:  cordata_pm$Bird and cordata_pm$PM
+T = 4, p-value = 0.8167
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+ tau 
+-0.2 
+
+
+	Spearman's rank correlation rho
+
+data:  cordata_pm$Bird and cordata_pm$PM
+S = 24, p-value = 0.7833
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+ rho 
+-0.2 
+
+Little Bennett Reg. Pk (33.6mi)
+
+	Pearson's product-moment correlation
+
+data:  cordata_pm$Bird and cordata_pm$PM
+t = -2.2224, df = 3, p-value = 0.1128
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.9853345  0.3075015
+sample estimates:
+      cor 
+-0.788752 
+
+	Pearson's product-moment correlation
+
+data:  cordata_pm$Bird and cordata_pm$PM
+t = -2.2224, df = 3, p-value = 0.1128
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.9853345  0.3075015
+sample estimates:
+      cor 
+-0.788752 
+
+
+	Spearman's rank correlation rho
+
+data:  cordata_pm$Bird and cordata_pm$PM
+S = 40, p-value = 0.01667
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+rho 
+ -1 
+
+Black Hill regional Park (36mi)
+
+	Pearson's product-moment correlation
+
+data:  cordata_pm$Bird and cordata_pm$PM
+t = -1.177, df = 3, p-value = 0.3241
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.9655302  0.6352029
+sample estimates:
+       cor 
+-0.5620422 
+
+
+	Kendall's rank correlation tau
+
+data:  cordata_pm$Bird and cordata_pm$PM
+T = 4, p-value = 0.8167
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+ tau 
+-0.2 
+
+
+	Spearman's rank correlation rho
+
+data:  cordata_pm$Bird and cordata_pm$PM
+S = 30, p-value = 0.45
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+ rho 
+-0.5 

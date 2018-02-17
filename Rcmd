@@ -50,6 +50,7 @@ ggplot(df2, aes(x=as.Date(Year,format='%Y'), YMean, color=ParameterName)) + geom
 
 #Calculate bluebird data:
 bluebird10_14 <- read_csv("airnow-data/bluebird10-14.csv")
+bluebird10_14$avg <- bluebird10_14$Fledged / bluebird10_14$Boxes
 bf2  <- bluebird10_14 %>%
      group_by(Year) %>%
      summarise(BSum=sum(Boxes,na.rm=TRUE),FSum=sum(Fledged,na.rm=TRUE))
@@ -93,3 +94,155 @@ res
 #Spearman rank correlation test
 res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "spearman")
 res
+
+
+library(dplyr)
+testdata <- filter(bluebird10_14, bluebird10_14$Trail=="Seneca Community Pk")
+testdata$pm <- cordata_pm$PM
+#Pearson Correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "pearson")
+res
+#
+##Kendall rank correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "kendall")
+res
+#
+##Spearman rank correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "spearman")
+res
+
+
+correlation_f <- function(bluebird, cordata, trail) {
+   library(dplyr)
+   testdata <- filter(bluebird, bluebird$Trail==trail)
+   testdata$PM <- cordata$PM
+   testdata$Ozone <- cordata$Ozone
+   sink("/home/zsherwin/test.txt",append=TRUE)
+   cat(trail,"\n")
+
+   #Pearson Correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "pearson")
+   cat(sprintf("Pearson on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   ##
+   ###Kendall rank correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "kendall")
+   cat(sprintf("Kendall on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   ##
+   ###Spearman rank correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "spearman")
+   cat(sprintf("Spearman on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   #Pearson Correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "pearson")
+   cat(sprintf("Pearson on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   ##
+   ###Kendall rank correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "kendall")
+   cat(sprintf("Kendall on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   ##
+   ###Spearman rank correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "spearman")
+   cat(sprintf("Spearman on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   sink()
+
+}
+
+
+correlation_f <- function(bluebird, cordata, trail) {
+   library(dplyr)
+   testdata <- filter(bluebird, bluebird$Trail==trail)
+   testdata$PM <- cordata$PM
+   testdata$Ozone <- cordata$Ozone
+   sink("/home/zsherwin/test.txt",append=TRUE)
+   cat(trail,",")
+
+   #Pearson Correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "pearson")
+   #cat(sprintf("%f,",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   ##
+   ###Kendall rank correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "kendall")
+   #cat(sprintf("Kendall on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   ##
+   ###Spearman rank correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "spearman")
+   #cat(sprintf("Spearman on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   #Pearson Correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "pearson")
+   #cat(sprintf("Pearson on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   ##
+   ###Kendall rank correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "kendall")
+   #cat(sprintf("Kendall on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   ##
+   ###Spearman rank correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "spearman")
+   #cat(sprintf("Spearman on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f\n",res$estimate))
+   sink()
+
+}
+
+
+#get trail list
+Traillist <- distinct(bluebird10_14, Trail)
+Trailvector <- unlist(Traillist)
+for (trail in Trailvector) {
+   correlation_f(bluebird10_14, cordata, trail)
+}
+
+ggplot(data=p4trail, aes(x=Trail, y=PPearson))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=PKendall))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=PSpearman))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=OPearson))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=OKendall))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=OSpearman))  + geom_point()
+
+#calculate over all correlation with cleaned trails
+
+bf2  <- bluebird10_14 %>%
+     group_by(Year) %>%
+     summarise(BSum=sum(Boxes,na.rm=TRUE),FSum=sum(Fledged,na.rm=TRUE))
+bf2$avg <- bf2$FSum / bf2$BSum
+ggplot(data=bf2, aes(x=Year, y=avg)) + geom_line() + geom_point()
+
+bf2$PM <- cordata$PM
+bf2$Ozone <- cordata$Ozone
+#
+res <- cor.test(bf2$avg,bf2$PM, method = "pearson")
+res
+#-0.6783
+#Kendall rank correlation test
+res <- cor.test(bf2$avg,bf2$PM, method = "kendall")
+res
+#-0.8
+#
+#Spearman rank correlation test
+res <- cor.test(bf2$avg,bf2$PM, method = "spearman")
+res
+#-0.9
+res <- cor.test(bf2$avg,bf2$Ozone, method = "pearson")
+res
+# -0.7245802
+##Kendall rank correlation test
+res <- cor.test(bf2$avg,bf2$Ozone, method = "kendall")
+res
+# -0.6
+#
+#Spearman rank correlation test
+res <- cor.test(bf2$avg,bf2$Ozone, method = "spearman")
+res
+# -0.7
+#
+write.csv(bf2, file="/home/zsherwin/airnow-data/sum.csv")
+
