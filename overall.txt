@@ -1,0 +1,79 @@
+PM2.5
+
+	Pearson's product-moment correlation
+
+data:  bf2$avg and bf2$PM
+t = -1.599, df = 3, p-value = 0.2081
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.9763071  0.5079047
+sample estimates:
+       cor 
+-0.6783233 
+
+
+	Kendall's rank correlation tau
+
+data:  bf2$avg and bf2$PM
+T = 1, p-value = 0.08333
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+ tau 
+-0.8 
+
+
+
+	Spearman's rank correlation rho
+
+data:  bf2$avg and bf2$PM
+S = 38, p-value = 0.08333
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+ rho 
+-0.9 
+
+
+Ozone
+
+
+	Pearson's product-moment correlation
+
+data:  bf2$avg and bf2$Ozone
+t = -1.821, df = 3, p-value = 0.1662
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.9802192  0.4371342
+sample estimates:
+       cor 
+-0.7245802 
+
+
+	Kendall's rank correlation tau
+
+data:  bf2$avg and bf2$Ozone
+T = 2, p-value = 0.2333
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+ tau 
+-0.6 
+
+
+	Spearman's rank correlation rho
+
+data:  bf2$avg and bf2$Ozone
+S = 34, p-value = 0.2333
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+ rho 
+-0.7 
+
+
+About the source data:
+
+Out of 52 trails on the record, 28 trails are selected. All of them have complete 5 year data.
+~
+~
+~
+~
+~
+~
