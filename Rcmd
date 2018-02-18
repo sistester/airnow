@@ -20,6 +20,22 @@ ggplot(data=df2, aes(x=Year, y=YMean, color=ParameterName)) + geom_line() + geom
 #put dots and connect them with lines for mean
 ggplot(data=df2, aes(x=Year, y=YMean, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
 
+#
+#boxplot shows only median
+ggboxplot(df, "Year", "AQI", color="ParameterName")
+
+#boxplot with mean
+dfpm <- subset(df, df[,10]=="PM2.5")
+ggplot(dfpm, aes(x=Year, y=AQI, fill=Year)) +
+    geom_boxplot() +
+    stat_summary(fun.y=mean, geom="point", shape=20, size=6, color="red") +
+    theme(legend.position="none") + scale_fill_brewer(palette="Pastel2")
+dfo <- subset(df, df[,10]=="OZONE")
+ggplot(dfo, aes(x=Year, y=AQI, fill=Year)) +
+    geom_boxplot() +
+    stat_summary(fun.y=mean, geom="point", shape=20, size=6, color="red") +
+    theme(legend.position="none") + scale_fill_brewer(palette="Pastel2")
+
 #put dots and line for median, std, min and max
 ggplot(data=df2, aes(x=Year, y=YMedian, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
 ggplot(data=df2, aes(x=Year, y=YStd, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
@@ -259,7 +275,16 @@ tf$distance<-distHaversine(tf[,2:3], c(38.919, -77.013))
 sf <- merge(tf,p4trail, by = "Trail", all.x = TRUE)
 #
 write.csv(sf, file="/home/zsherwin/airnow-data/trail-dist-p.csv")
-ggplot(data=sf, mapping=aes(x=distance, y=PPearson)) + geom_point()+geom_smooth()
+# Create graphs about distance and p value
+library(ggpubr)
+ggscatter(sf, x="distance", y="PPearson", add="reg.line", size=5, alpha=0.6, xlab="Distance to API Monitor(mi)", ylab="Pearson Correlation Coefficient", color="Trail")
+ggscatter(sf, x="distance", y="PKendall", add="reg.line", size=5, alpha=0.6, xlab="Distance to API Monitor(mi)", ylab="Kendall Correlation Coefficient", color="Trail")
+ggscatter(sf, x="distance", y="PSpearman", add="reg.line", size=5, alpha=0.6, xlab="Distance to API Monitor(mi)", ylab="Spearman Correlation Coefficient", color="Trail")
+#
+ggscatter(sf, x="distance", y="OPearson", add="reg.line", size=5, alpha=0.6, xlab="Distance to API Monitor(mi)", ylab="Pearson Correlation Coefficient", color="Trail")
+ggscatter(sf, x="distance", y="OKendall", add="reg.line", size=5, alpha=0.6, xlab="Distance to API Monitor(mi)", ylab="Kendall Correlation Coefficient", color="Trail")
+ggscatter(sf, x="distance", y="OSpearman", add="reg.line", size=5, alpha=0.6, xlab="Distance to API Monitor(mi)", ylab="Spearman Correlation Coefficient", color="Trail")
+
 #correlation between p and distance
 res <- cor.test(sf$PPearson,sf$distance, method = "pearson")
 res
