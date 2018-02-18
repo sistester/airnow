@@ -11,6 +11,14 @@ group_by(Year,ParameterName) %>%
 summarise(YMean=mean(AQI, na.rm=TRUE), YMax=max(AQI,  na.rm=TRUE), YMin=min(AQI,  na.rm=TRUE), YMedian=median(AQI,  na.rm=TRUE), YStd=sd(AQI,  na.rm=TRUE))
 df2
 
+# get the numbers for specified months
+breedmonth <- c("03","04","05","06","07","08")
+mdf <- filter(df, Month %in% breedmonth)
+mdf2 <- mdf %>%
+group_by(Year,ParameterName) %>%
+summarise(YMean=mean(AQI, na.rm=TRUE), YMax=max(AQI,  na.rm=TRUE), YMin=min(AQI,  na.rm=TRUE), YMedian=median(AQI,  na.rm=TRUE), YStd=sd(AQI,  na.rm=TRUE))
+mdf2
+
 #plot it
 library(ggplot2)
 
@@ -19,6 +27,8 @@ ggplot(data=df2, aes(x=Year, y=YMean, color=ParameterName)) + geom_line() + geom
 
 #put dots and connect them with lines for mean
 ggplot(data=df2, aes(x=Year, y=YMean, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+# For 6 months
+ggplot(data=mdf2, aes(x=Year, y=YMean, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
 
 #
 #boxplot shows only median
@@ -35,6 +45,20 @@ ggplot(dfo, aes(x=Year, y=AQI, fill=Year)) +
     geom_boxplot() +
     stat_summary(fun.y=mean, geom="point", shape=20, size=6, color="red") +
     theme(legend.position="none") + scale_fill_brewer(palette="Pastel2")
+
+#boxplot with mean for 6 months
+mdfpm <- subset(mdf, mdf[,10]=="PM2.5")
+ggplot(mdfpm, aes(x=Year, y=AQI, fill=Year)) +
+    geom_boxplot() +
+    stat_summary(fun.y=mean, geom="point", shape=20, size=6, color="red") +
+    theme(legend.position="none") + scale_fill_brewer(palette="Pastel2")
+mdfo <- subset(mdf, mdf[,10]=="OZONE")
+ggplot(mdfo, aes(x=Year, y=AQI, fill=Year)) +
+    geom_boxplot() +
+    stat_summary(fun.y=mean, geom="point", shape=20, size=6, color="red") +
+    theme(legend.position="none") + scale_fill_brewer(palette="Pastel2")
+
+
 
 #put dots and line for median, std, min and max
 ggplot(data=df2, aes(x=Year, y=YMedian, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
@@ -217,12 +241,27 @@ for (trail in Trailvector) {
    correlation_f(bluebird10_14, cordata, trail)
 }
 
+#for 6month
+for (trail in Trailvector) {
+   correlation_f(bluebird10_14, cordata_6mo, trail)
+}
+
+#build graphs for avg and PM/Ozone, not working
+newbf <- merge(bluebird10_14,cordata, by="Year")
+mnewbf <- merge(bluebird10_14,cordata_6mo, by="Year")
+ggboxplot(newbf, "PM", "avg", color="Year")
+library(ggpubr)
+ggscatter(newbf, x="PM", y="avg", size=4, alpha=0.6, xlab="PM2.5", ylab="Average fledged per box", color="Trail")
+
+
 ggplot(data=p4trail, aes(x=Trail, y=PPearson))  + geom_point()
 ggplot(data=p4trail, aes(x=Trail, y=PKendall))  + geom_point()
 ggplot(data=p4trail, aes(x=Trail, y=PSpearman))  + geom_point()
 ggplot(data=p4trail, aes(x=Trail, y=OPearson))  + geom_point()
 ggplot(data=p4trail, aes(x=Trail, y=OKendall))  + geom_point()
 ggplot(data=p4trail, aes(x=Trail, y=OSpearman))  + geom_point()
+
+ggplot(data=p4trail_6mo, aes(x=Trail, y=PPearson))  + geom_point()
 
 #calculate over all correlation with cleaned trails
 
@@ -262,6 +301,42 @@ res
 #
 write.csv(bf2, file="/home/zsherwin/airnow-data/sum.csv")
 
+# 6 month data correlation
+mbf2  <- bluebird10_14 %>%
+     group_by(Year) %>%
+     summarise(BSum=sum(Boxes,na.rm=TRUE),FSum=sum(Fledged,na.rm=TRUE))
+mbf2$avg <- mbf2$FSum / bf2$BSum
+
+mbf2$PM <- cordata_6mo$PM
+mbf2$Ozone <- cordata_6mo$Ozone
+ggplot(data=mbf2, aes(x=PM,y=avg)) + geom_line() + geom_point()
+#
+res <- cor.test(mbf2$avg,mbf2$PM, method = "pearson")
+res
+#-0.8151935
+#Kendall rank correlation test
+res <- cor.test(mbf2$avg,mbf2$PM, method = "kendall")
+res
+# -0.8
+#Spearman rank correlation test
+res <- cor.test(mbf2$avg,mbf2$PM, method = "spearman")
+res
+# -0.9
+#
+res <- cor.test(mbf2$avg,mbf2$Ozone, method = "pearson")
+res
+# -0.719192
+##Kendall rank correlation test
+res <- cor.test(mbf2$avg,mbf2$Ozone, method = "kendall")
+res
+# -0.6
+#
+#Spearman rank correlation test
+res <- cor.test(mbf2$avg,mbf2$Ozone, method = "spearman")
+res
+#-0.7
+#
+write.csv(mbf2, file="/home/zsherwin/airnow-data/sum-6mo.csv")
 
 #calculate distance
 install.packages("geosphere")
