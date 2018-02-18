@@ -1,0 +1,11 @@
+0000000000000000000000000000000000000000 b617c934ddc08f41114ed3312630df8dfe7fe271 Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1510687205 -0500	commit (initial): init commit
+b617c934ddc08f41114ed3312630df8dfe7fe271 0e9f3a4aa46a7bb42f5ea9d5250ed0d36eeb0b8a Ziying Sherwin <zsherwin@mail.nih.gov> 1510690925 -0500	commit: 11/14/17 15:22
+0e9f3a4aa46a7bb42f5ea9d5250ed0d36eeb0b8a 480b73392d6e402c1de3293ac99c06755ee651a7 Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1510776844 -0500	merge develop: Fast-forward
+480b73392d6e402c1de3293ac99c06755ee651a7 ac1356ba00065a7f01008557391ccf5ca41ddcbb Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1518809034 -0500	commit: bluebird data
+ac1356ba00065a7f01008557391ccf5ca41ddcbb abdf89ce386be08533cf699f601a305507d199fb Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1518809152 -0500	commit: zip code 20906
+abdf89ce386be08533cf699f601a305507d199fb 2c04956c872cea296a4bac19fc1a819881bfedb8 Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1518810006 -0500	commit: with bluebird data
+2c04956c872cea296a4bac19fc1a819881bfedb8 4fd36c86d986c864ae6f01d15c182a4223b2699f Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1518814057 -0500	commit: first pass
+4fd36c86d986c864ae6f01d15c182a4223b2699f 719731ff554c64f48123adca9d94811395d0e40c Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1518849943 -0500	commit: summary csv files
+719731ff554c64f48123adca9d94811395d0e40c 87247626c9a479765ce82266ef212cfd86a8908a Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1518911376 -0500	commit: with overall correlation data
+87247626c9a479765ce82266ef212cfd86a8908a 7a234e85ecd619b57bdde280124cd9ce46c15247 Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1518921585 -0500	commit: map info
+7a234e85ecd619b57bdde280124cd9ce46c15247 a9ef795431b15bfba49107df2bde2c92234fac6d Ziying Sherwin <zsherwin@fire2.nlm.nih.gov> 1518921692 -0500	commit: minus large map file

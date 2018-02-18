@@ -1,0 +1,275 @@
+#import data
+airnow <- read_csv("airnow-data/airnow-20906.csv", col_types = cols(DateObserved = col_date(format = "%Y-%m-%d")))
+colnames(airnow_20906) <- c("DateObserved","HourObserved","LocalTimeZone","ReportingArea","StateCode","Latitude","Longitude","ParameterName","AQI","CategoryNumber","CategoryName")
+
+# process data and get mean, max, min, median and std
+library(dplyr);
+library(tidyr);
+df <- airnow_20906 %>% separate(DateObserved, into=c("Year","Month", "Day"),sep="-")
+df2 <- df %>%
+group_by(Year,ParameterName) %>%
+summarise(YMean=mean(AQI, na.rm=TRUE), YMax=max(AQI,  na.rm=TRUE), YMin=min(AQI,  na.rm=TRUE), YMedian=median(AQI,  na.rm=TRUE), YStd=sd(AQI,  na.rm=TRUE))
+df2
+
+#plot it
+library(ggplot2)
+
+#put dots only for mean
+ggplot(data=df2, aes(x=Year, y=YMean, color=ParameterName)) + geom_line() + geom_point()
+
+#put dots and connect them with lines for mean
+ggplot(data=df2, aes(x=Year, y=YMean, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+
+#put dots and line for median, std, min and max
+ggplot(data=df2, aes(x=Year, y=YMedian, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+ggplot(data=df2, aes(x=Year, y=YStd, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+ggplot(data=df2, aes(x=Year, y=YMin, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+ggplot(data=df2, aes(x=Year, y=YMax, color=ParameterName, group=ParameterName)) + geom_line() + geom_point()
+df2
+ggplot(data=df2, aes(x=Year, y=YMax, color=ParameterName, group=ParameterName)) + geom_line() + geom_point() + geom_abline()
+
+#coefficiency
+df_mod <- lm (YMax ~ Year, data=df2)
+coef(df_mod)
+
+library(modelr)
+grid <- df2 %>% data_grid(YMin)
+mod1 <- lm (YMean ~ Year + ParameterName, data = df2)
+mod2 <- lm (YMean ~ Year * ParameterName, data = df2)
+grid <- df2 %>% data_grid(Year, ParameterName) %>% gather_predictions(mod1, mod2)
+grid
+
+#plot the models, predictions
+ggplot(df2, aes(Year, YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(y=pred)) + facet_wrap( ~ model)
+ggplot(df2, aes(Year, YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(y=pred, group=ParameterName)) + facet_wrap( ~ model)
+
+
+ggplot(df2, aes(x=as.Date(Year,format='%Y'), YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(x=as.Date(Year,format='%Y'),y=pred, group=ParameterName)) + facet_wrap( ~ model)
+ggplot(df2, aes(x=as.Date(Year,format='%Y'), YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(x=as.Date(Year,format='%Y'),y=pred)) + facet_wrap( ~ model)
+
+
+#Calculate bluebird data:
+bluebird10_14 <- read_csv("airnow-data/bluebird10-14.csv")
+bluebird10_14$avg <- bluebird10_14$Fledged / bluebird10_14$Boxes
+bf2  <- bluebird10_14 %>%
+     group_by(Year) %>%
+     summarise(BSum=sum(Boxes,na.rm=TRUE),FSum=sum(Fledged,na.rm=TRUE))
+bf2$avg <- bf2$FSum / bf2$BSum
+ggplot(data=bf2, aes(x=Year, y=avg)) + geom_line() + geom_point()
+
+library(readr)
+cordata_pm <- read_csv("airnow-data/cordata-pm")
+library("ggpubr")
+#visualization
+ggscatter(cordata_pm, x = "PM", y = "Bird", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Bird Fledged per Box", ylab = "PM2.5")
+#Are the data from each of the 2 variables (x, y) follow a normal distribution?
+#
+#    Use Shapiro-Wilk normality test –> R function: shapiro.test()
+#        and look at the normality plot —> R function: ggpubr::ggqqplot()
+# Shapiro-Wilk normality test for bird
+shapiro.test(cordata_pm$Bird) 
+# data:  cordata_pm$Bird
+# W = 0.78289, p-value = 0.05835
+#
+# # Shapiro-Wilk normality test for PM2.5
+shapiro.test(cordata_pm$PM)
+# data:  cordata_pm$Bird
+# W = 0.78289, p-value = 0.05835
+#
+# Visual inspection of the data normality using Q-Q plots (quantile-quantile plots). Q-Q plot draws the correlation between a given sample and the normal distribution.
+library("ggpubr")
+ggqqplot(cordata_pm$Bird, ylab = "Bird")
+ggqqplot(cordata_pm$PM, ylab = "PM")
+#Pearson Correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "pearson")
+res
+
+#Kendall rank correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "kendall")
+res
+
+#Spearman rank correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "spearman")
+res
+
+
+library(dplyr)
+testdata <- filter(bluebird10_14, bluebird10_14$Trail=="Seneca Community Pk")
+testdata$pm <- cordata_pm$PM
+#Pearson Correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "pearson")
+res
+#
+##Kendall rank correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "kendall")
+res
+#
+##Spearman rank correlation test
+res <- cor.test(cordata_pm$Bird,cordata_pm$PM, method = "spearman")
+res
+
+
+correlation_f <- function(bluebird, cordata, trail) {
+   library(dplyr)
+   testdata <- filter(bluebird, bluebird$Trail==trail)
+   testdata$PM <- cordata$PM
+   testdata$Ozone <- cordata$Ozone
+   sink("/home/zsherwin/test.txt",append=TRUE)
+   cat(trail,"\n")
+
+   #Pearson Correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "pearson")
+   cat(sprintf("Pearson on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   ##
+   ###Kendall rank correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "kendall")
+   cat(sprintf("Kendall on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   ##
+   ###Spearman rank correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "spearman")
+   cat(sprintf("Spearman on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   #Pearson Correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "pearson")
+   cat(sprintf("Pearson on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   ##
+   ###Kendall rank correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "kendall")
+   cat(sprintf("Kendall on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   ##
+   ###Spearman rank correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "spearman")
+   cat(sprintf("Spearman on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("estimate: %f\n",res$estimate))
+   sink()
+
+}
+
+
+correlation_f <- function(bluebird, cordata, trail) {
+   library(dplyr)
+   testdata <- filter(bluebird, bluebird$Trail==trail)
+   testdata$PM <- cordata$PM
+   testdata$Ozone <- cordata$Ozone
+   sink("/home/zsherwin/test.txt",append=TRUE)
+   cat(trail,",")
+
+   #Pearson Correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "pearson")
+   #cat(sprintf("%f,",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   ##
+   ###Kendall rank correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "kendall")
+   #cat(sprintf("Kendall on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   ##
+   ###Spearman rank correlation test
+   res <- cor.test(testdata$avg,testdata$PM, method = "spearman")
+   #cat(sprintf("Spearman on PM2.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   #Pearson Correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "pearson")
+   #cat(sprintf("Pearson on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   ##
+   ###Kendall rank correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "kendall")
+   #cat(sprintf("Kendall on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f,",res$estimate))
+   ##
+   ###Spearman rank correlation test
+   res <- cor.test(testdata$avg,testdata$Ozone, method = "spearman")
+   #cat(sprintf("Spearman on Ozone.5\n P-value: %f\t\t",res$p.value))
+   cat(sprintf("%f\n",res$estimate))
+   sink()
+
+}
+
+
+#get trail list
+Traillist <- distinct(bluebird10_14, Trail)
+Trailvector <- unlist(Traillist)
+for (trail in Trailvector) {
+   correlation_f(bluebird10_14, cordata, trail)
+}
+
+ggplot(data=p4trail, aes(x=Trail, y=PPearson))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=PKendall))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=PSpearman))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=OPearson))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=OKendall))  + geom_point()
+ggplot(data=p4trail, aes(x=Trail, y=OSpearman))  + geom_point()
+
+#calculate over all correlation with cleaned trails
+
+bf2  <- bluebird10_14 %>%
+     group_by(Year) %>%
+     summarise(BSum=sum(Boxes,na.rm=TRUE),FSum=sum(Fledged,na.rm=TRUE))
+bf2$avg <- bf2$FSum / bf2$BSum
+ggplot(data=bf2, aes(x=Year, y=avg)) + geom_line() + geom_point()
+
+bf2$PM <- cordata$PM
+bf2$Ozone <- cordata$Ozone
+#
+res <- cor.test(bf2$avg,bf2$PM, method = "pearson")
+res
+#-0.6783
+#Kendall rank correlation test
+res <- cor.test(bf2$avg,bf2$PM, method = "kendall")
+res
+#-0.8
+#
+#Spearman rank correlation test
+res <- cor.test(bf2$avg,bf2$PM, method = "spearman")
+res
+#-0.9
+res <- cor.test(bf2$avg,bf2$Ozone, method = "pearson")
+res
+# -0.7245802
+##Kendall rank correlation test
+res <- cor.test(bf2$avg,bf2$Ozone, method = "kendall")
+res
+# -0.6
+#
+#Spearman rank correlation test
+res <- cor.test(bf2$avg,bf2$Ozone, method = "spearman")
+res
+# -0.7
+#
+write.csv(bf2, file="/home/zsherwin/airnow-data/sum.csv")
+
+
+#calculate distance
+install.packages("geosphere")
+library(geosphere)
+library("dplyr")
+tf <- select(trails_test_28,Trail,Latitude,Longitude)
+tf$distance <- distm(tf[,2:3], c(38.919, -77.013), fun = distHaversine)[,1] / 1609
+# Or, the final result in meter
+tf$distance<-distHaversine(tf[,2:3], c(38.919, -77.013))
+#merge two data frames
+sf <- merge(tf,p4trail, by = "Trail", all.x = TRUE)
+#
+write.csv(sf, file="/home/zsherwin/airnow-data/trail-dist-p.csv")
+ggplot(data=sf, mapping=aes(x=distance, y=PPearson)) + geom_point()+geom_smooth()
+#correlation between p and distance
+res <- cor.test(sf$PPearson,sf$distance, method = "pearson")
+res
+res <- cor.test(sf$PKendall,sf$distance, method = "kendall")
+res
+res <- cor.test(sf$PSpearman,sf$distance, method = "spearman")
+res
+res <- cor.test(sf$OPearson,sf$distance, method = "pearson")
+res
+res <- cor.test(sf$OKendall,sf$distance, method = "kendall")
+res
+res <- cor.test(sf$OSpearman,sf$distance, method = "spearman")
+res
