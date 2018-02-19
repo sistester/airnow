@@ -79,6 +79,19 @@ mod2 <- lm (YMean ~ Year * ParameterName, data = df2)
 grid <- df2 %>% data_grid(Year, ParameterName) %>% gather_predictions(mod1, mod2)
 grid
 
+library(modelr)
+xnewbf <- merge (tf, mnewbf, by="Trail")
+mod1 <- lm (avg ~ PM + distance, data=xnewbf)
+summary(mod1)
+mod2 <- lm (avg ~ PM + Boxes, data=xnewbf)
+summary(mod2)
+grid <- xnewbf %>% 
+    data_grid(PM, distance) %>% 
+    gather_predictions(mod1, mod2)
+grid
+ggplot(xnewbf, aes(PM, avg, color=distance)) + geom_point() + geom_line(data=grid, aes(y=pred)) + facet_wrap( ~ model)
+
+
 #plot the models, predictions
 ggplot(df2, aes(Year, YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(y=pred)) + facet_wrap( ~ model)
 ggplot(df2, aes(Year, YMean, color=ParameterName)) + geom_point() + geom_line(data=grid, aes(y=pred, group=ParameterName)) + facet_wrap( ~ model)
