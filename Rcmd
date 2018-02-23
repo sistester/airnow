@@ -394,7 +394,7 @@ with(bf2, plot(Year, PM, type="l", col="red3",
 par(new = T)
 with(bf2, plot(Year, avg, pch=16, axes=F, xlab=NA, ylab=NA, cex=1.2) )
 axis(side = 4 )
-mtext(side = 4, line = 3, 'Yearly Average Fledged per Box')
+mtext(side = 4, line = 3, 'Yearly Average Fledglings per Box')
 legend("topleft",
        legend=c("PM2.5","Fledged"),
        lty=c(1,0), pch=c(NA, 16), col=c("red3", "black"))
@@ -407,7 +407,7 @@ with(bf2, plot(Year, Ozone, type="l", col="red3",
 par(new = T)
 with(bf2, plot(Year, avg, pch=16, axes=F, xlab=NA, ylab=NA, cex=1.2) )
 axis(side = 4 )
-mtext(side = 4, line = 3, 'Yearly Average Fledged per Box')
+mtext(side = 4, line = 3, 'Yearly Average Fledglings per Box')
 legend("right",
        legend=c("Ozone","Fledged"),
        lty=c(1,0), pch=c(NA, 16), col=c("red3", "black"))
