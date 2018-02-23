@@ -85,11 +85,9 @@ mod1 <- lm (avg ~ PM + distance, data=xnewbf)
 summary(mod1)
 mod2 <- lm (avg ~ PM + Boxes, data=xnewbf)
 summary(mod2)
-grid <- xnewbf %>% 
-    data_grid(PM, distance) %>% 
-    gather_predictions(mod1, mod2)
-grid
-ggplot(xnewbf, aes(PM, avg, color=distance)) + geom_point() + geom_line(data=grid, aes(y=pred)) + facet_wrap( ~ model)
+layout(matrix(c(1,2,3,4),2,2))
+plot(mod1)
+plot(mod2) 
 
 
 #plot the models, predictions
@@ -386,3 +384,31 @@ res <- cor.test(sf$OKendall,sf$distance, method = "kendall")
 res
 res <- cor.test(sf$OSpearman,sf$distance, method = "spearman")
 res
+
+# Create double y-axis plot for yearly average
+plot.new()
+frame()
+par(mar = c(5,5,2,5))
+with(bf2, plot(Year, PM, type="l", col="red3", 
+             ylab="Yearly PM2.5 Mean"))
+par(new = T)
+with(bf2, plot(Year, avg, pch=16, axes=F, xlab=NA, ylab=NA, cex=1.2) )
+axis(side = 4 )
+mtext(side = 4, line = 3, 'Yearly Average Fledged per Box')
+legend("topleft",
+       legend=c("PM2.5","Fledged"),
+       lty=c(1,0), pch=c(NA, 16), col=c("red3", "black"))
+
+plot.new()
+frame()
+par(mar = c(5,5,2,5))
+with(bf2, plot(Year, Ozone, type="l", col="red3",
+             ylab="Yearly Ozone Mean"))
+par(new = T)
+with(bf2, plot(Year, avg, pch=16, axes=F, xlab=NA, ylab=NA, cex=1.2) )
+axis(side = 4 )
+mtext(side = 4, line = 3, 'Yearly Average Fledged per Box')
+legend("right",
+       legend=c("Ozone","Fledged"),
+       lty=c(1,0), pch=c(NA, 16), col=c("red3", "black"))
+
