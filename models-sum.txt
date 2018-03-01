@@ -1,0 +1,73 @@
+lm(formula = avg ~ PM, data = xnewbf)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-3.08180 -0.76165 -0.03548  0.77951  2.89256 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  5.63862    1.30630   4.316 3.01e-05 ***
+PM          -0.05838    0.02686  -2.173   0.0315 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.144 on 138 degrees of freedom
+Multiple R-squared:  0.03309,	Adjusted R-squared:  0.02609 
+F-statistic: 4.723 on 1 and 138 DF,  p-value: 0.03146
+
+lm(formula = avg ~ PM + distance, data = xnewbf)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.2304 -0.8291  0.0183  0.7678  2.9642 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  5.09050    1.25388   4.060 8.22e-05 ***
+PM          -0.05838    0.02561  -2.279 0.024212 *  
+distance     0.04964    0.01293   3.840 0.000187 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.091 on 137 degrees of freedom
+Multiple R-squared:  0.1271,	Adjusted R-squared:  0.1143 
+F-statistic:  9.97 on 2 and 137 DF,  p-value: 9.069e-05
+
+
+lm(formula = avg ~ PM + Boxes, data = xnewbf)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.99920 -0.78340  0.04661  0.70085  2.73311 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  5.623928   1.301992   4.319 2.98e-05 ***
+PM          -0.060969   0.026836  -2.272   0.0246 *  
+Boxes        0.009127   0.006580   1.387   0.1677    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.14 on 137 degrees of freedom
+Multiple R-squared:  0.04648,	Adjusted R-squared:  0.03256 
+F-statistic: 3.339 on 2 and 137 DF,  p-value: 0.03837
+
+anova(mod0, mod1)
+Analysis of Variance Table
+
+Model 1: avg ~ PM
+Model 2: avg ~ PM + distance
+  Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+1    138 180.61                                  
+2    137 163.06  1    17.551 14.746 0.0001873 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+anova(mod0, mod2)
+Analysis of Variance Table
+
+Model 1: avg ~ PM
+Model 2: avg ~ PM + Boxes
+  Res.Df    RSS Df Sum of Sq      F Pr(>F)
+1    138 180.61                           
+2    137 178.11  1    2.5007 1.9235 0.1677
